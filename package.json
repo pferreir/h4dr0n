@@ -13,7 +13,8 @@
     "gulp-watch": "^4.3.5",
     "q": "^1.4.1",
     "rollup": "^0.26.3",
-    "yargs": "^4.2.0"
+    "yargs": "^4.2.0",
+    "electron-installer-redhat": "^0.2.0"
   },
   "optionalDependencies": {
     "appdmg": "^0.3.2",

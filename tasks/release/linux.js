@@ -65,40 +65,31 @@ var renameApp = function () {
     return readyAppDir.renameAsync('electron', manifest.name);
 };
 
-var packToDebFile = function () {
+var packToRPM = function () {
     var deferred = Q.defer();
 
-    var debFileName = packName + '.deb';
-    var debPath = releasesDir.path(debFileName);
+    var rpmFileName = packName + '.rpm';
 
-    gulpUtil.log('Creating DEB package... (' + debFileName + ')');
+    gulpUtil.log('Creating RPM package... (' + rpmFileName + ')');
 
-    // Counting size of the app in KiB
-    var appSize = Math.round(readyAppDir.inspectTree('.').size / 1024);
+    var installer = require('electron-installer-redhat')
 
-    // Preparing debian control file
-    var control = projectDir.read('resources/linux/DEBIAN/control');
-    control = utils.replace(control, {
-        name: manifest.name,
-        description: manifest.description,
-        version: manifest.version,
-        author: manifest.author,
-        size: appSize
-    });
-    packDir.write('DEBIAN/control', control);
+    var options = {
+      src: readyAppDir.path().replace(/\s/g, '\\ '),
+      dest: releasesDir.path().replace(/\s/g, '\\ '),
+      arch: 'amd64'
+    }
 
-    // Build the package...
-    childProcess.exec('fakeroot dpkg-deb -Zxz --build ' + packDir.path().replace(/\s/g, '\\ ') + ' ' + debPath.replace(/\s/g, '\\ '),
-        function (error, stdout, stderr) {
-            if (error || stderr) {
-                console.log('ERROR while building DEB package:');
-                console.log(error);
-                console.log(stderr);
-            } else {
-                gulpUtil.log('DEB package ready!', debPath);
-            }
-            deferred.resolve();
-        });
+    console.log('Creating package (this may take a while)')
+
+    installer(options, function (err) {
+      if (err) {
+        console.error(err, err.stack)
+        process.exit(1)
+      }
+
+      console.log('Successfully created package at ' + options.dest)
+    })
 
     return deferred.promise;
 };
@@ -113,7 +104,7 @@ module.exports = function () {
         .then(packageBuiltApp)
         .then(finalize)
         .then(renameApp)
-        .then(packToDebFile)
+        .then(packToRPM)
         .then(cleanClutter)
         .catch(console.error);
 };

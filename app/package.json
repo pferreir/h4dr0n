@@ -4,6 +4,8 @@
   "description": "A simple drum machine.",
   "version": "0.1.0",
   "author": "Pedro Ferreira",
+  "homepage": "https://github.com/pferreir/h4dr0n",
+  "license": "BSD",
   "copyright": "© 2016, Pedro Ferreira",
   "main": "background.js",
   "dependencies": {
