@@ -1,5 +1,5 @@
-import { remote } from 'electron'; // native electron module
-import jetpack from 'fs-jetpack'; // module loaded from npm
+import { remote } from 'electron';
+import jetpack from 'fs-jetpack';
 import $ from 'jquery';
 
 let app = remote.app;
@@ -12,14 +12,14 @@ let sampleList = {
     clave: 'samples/clave.mp3',
     snare: 'samples/snare.mp3',
     hihat: 'samples/hihat.mp3'
-}
+};
 
 let config = {
     bpm: 220,
     sequence: Object.assign({}, sampleList),
     position: 0,
     playing: false
-}
+};
 
 Object.keys(config.sequence).forEach(function(key) {
     config.sequence[key] = Array.from(new Array(8), () => false);
@@ -44,7 +44,6 @@ function loadSamples(samplePaths) {
         Object.keys(samplePaths).forEach((key) => {
             let filePath = samplePaths[key],
                 sample = appDir.read(filePath, 'buffer');
-            console.log(filePath)
             promises.push(new Promise((resolve, reject) => {
                 context.decodeAudioData(sample.buffer.slice(sample.offset), function(buffer) {
                     console.info('Loaded ' + filePath);
@@ -61,17 +60,16 @@ function loadSamples(samplePaths) {
 }
 
 function playSound(buffer) {
-  var source = context.createBufferSource(); // creates a sound source
-  source.buffer = buffer;                    // tell the source which sound to play
-  source.connect(context.destination);       // connect the source to the context's destination (the speakers)
-  source.start(0);                           // play the source now
-                                             // note: on older systems, may have to use deprecated noteOn(time);
+    let source = context.createBufferSource();
+    source.buffer = buffer;
+    source.connect(context.destination);
+    source.start(0);
 }
 
 function playSequence() {
     const position = config.position;
 
-    $('.row .button').removeClass('playing')
+    $('.row .button').removeClass('playing');
     $('.row .button[data-step-number="' + position + '"]').addClass('playing');
 
     for (let track of Object.keys(config.sequence)) {
@@ -108,7 +106,7 @@ function buildSequencer() {
 $(document).on('DOMContentLoaded', function () {
     $('body').on('click', '.row .button', function() {
         const number = $(this).attr('data-step-number'),
-              track = $(this).closest('.row').attr('data-sample');
+            track = $(this).closest('.row').attr('data-sample');
         config.sequence[track][number] = !config.sequence[track][number];
 
         $(this).toggleClass('enabled');

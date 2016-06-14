@@ -1,7 +1,5 @@
-import { app, BrowserWindow, Menu } from 'electron';
+import {app, BrowserWindow} from 'electron';
 import env from './env';
-
-var mainWindow;
 
 app.on('ready', function () {
     var mainWindow = new BrowserWindow({
