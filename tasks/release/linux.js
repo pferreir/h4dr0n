@@ -75,20 +75,21 @@ var packToRPM = function () {
     var installer = require('electron-installer-redhat')
 
     var options = {
-      src: readyAppDir.path().replace(/\s/g, '\\ '),
-      dest: releasesDir.path().replace(/\s/g, '\\ '),
-      arch: 'amd64'
+        src: readyAppDir.path().replace(/\s/g, '\\ '),
+        dest: releasesDir.path().replace(/\s/g, '\\ '),
+        icon: projectDir.path('resources/icon.png'),
+        arch: 'amd64'
     }
 
     console.log('Creating package (this may take a while)')
 
     installer(options, function (err) {
-      if (err) {
-        console.error(err, err.stack)
-        process.exit(1)
-      }
+        if (err) {
+            console.error(err, err.stack)
+            process.exit(1)
+        }
 
-      console.log('Successfully created package at ' + options.dest)
+        console.log('Successfully created package at ' + options.dest)
     })
 
     return deferred.promise;
